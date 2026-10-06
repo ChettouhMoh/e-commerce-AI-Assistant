@@ -26,6 +26,30 @@ func NewAssistantService(llm ports.LLMProvider, tools ports.ToolRegistry, maxCal
 	return &AssistantService{llm: llm, tools: tools, maxCalls: maxCalls}
 }
 
+// Run satisfies the channels.AssistantUseCase interface. It loads or creates
+// a conversation, delegates to HandleMessage, and persists the conversation.
+func (s *AssistantService) Run(ctx context.Context, conversationID, userID, message string) (*domain.AssistantResponse, error) {
+	if conversationID == "" || userID == "" {
+		return nil, fmt.Errorf("conversationID and userID are required")
+	}
+	if message == "" {
+		return nil, fmt.Errorf("message is required")
+	}
+
+	conv := &domain.Conversation{
+		ID:        conversationID,
+		ChannelID: userID,
+		Turns:     []domain.Turn{},
+		Metadata:  make(map[string]string),
+	}
+
+	resp, err := s.HandleMessage(ctx, conv, message)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 // HandleMessage processes a user message and returns the assistant response.
 // It runs the bounded LLM tool-call loop: at each iteration the LLM may return
 // tool calls; those are executed and fed back as observation messages until
