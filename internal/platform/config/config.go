@@ -15,6 +15,9 @@ type Config struct {
 	EmbeddingProvider                string
 	OllamaBaseURL                    string
 	OllamaEmbeddingModel             string
+	HuggingFaceBaseURL               string
+	HuggingFaceEmbeddingModel        string
+	HuggingFaceAPIKey                string
 	WhatsAppVerifyToken              string
 	WhatsAppAppSecret                string
 	WhatsAppAccessToken              string
@@ -33,12 +36,15 @@ func Default() *Config {
 	return &Config{
 		AppEnv:                           getEnv("APP_ENV", "local"),
 		HTTPAddr:                         getEnv("HTTP_ADDR", ":8080"),
-		LLMBaseURL:                       getEnv("LLM_BASE_URL", "http://localhost:11434/v1"),
-		LLMApiKey:                        getEnv("LLM_API_KEY", "ollama"),
-		LLMModel:                         getEnv("LLM_MODEL", "llama3.2"),
-		EmbeddingProvider:                getEnv("EMBEDDING_PROVIDER", "ollama"),
+		LLMBaseURL:                       getEnv("LLM_BASE_URL", "https://api.groq.com/openai/v1"),
+		LLMApiKey:                        getEnv("LLM_API_KEY", ""),
+		LLMModel:                         getEnv("LLM_MODEL", "llama-3.2-3b-preview"),
+		EmbeddingProvider:                getEnv("EMBEDDING_PROVIDER", "huggingface"),
 		OllamaBaseURL:                    getEnv("OLLAMA_BASE_URL", "http://localhost:11434"),
 		OllamaEmbeddingModel:             getEnv("OLLAMA_EMBEDDING_MODEL", "nomic-embed-text"),
+		HuggingFaceBaseURL:               getEnv("HUGGINGFACE_BASE_URL", "https://api-inference.huggingface.co"),
+		HuggingFaceEmbeddingModel:        getEnv("HUGGINGFACE_EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2"),
+		HuggingFaceAPIKey:                getEnv("HUGGINGFACE_API_KEY", ""),
 		WhatsAppVerifyToken:              getEnv("WHATSAPP_VERIFY_TOKEN", ""),
 		WhatsAppAppSecret:                getEnv("WHATSAPP_APP_SECRET", ""),
 		WhatsAppAccessToken:              getEnv("WHATSAPP_ACCESS_TOKEN", ""),

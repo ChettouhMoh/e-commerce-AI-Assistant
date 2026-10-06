@@ -13,8 +13,6 @@ import (
 	"ecommerce-ai-assistant/internal/app"
 	"ecommerce-ai-assistant/internal/platform/config"
 	"ecommerce-ai-assistant/internal/platform/logging"
-
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -38,25 +36,30 @@ func main() {
 		return
 	}
 
-	deps, err := app.Wire(context.Background(), cfg)
+	// Wire dependencies based on config
+	deps, err := app.Wire(cfg)
 	if err != nil {
 		logger.Error("wiring failed", "error", err)
 		os.Exit(1)
 	}
 
-	handler, err := buildHandler(deps, cfg, logger)
-	if err != nil {
-		logger.Error("handler build failed", "error", err)
-		os.Exit(1)
-	}
+	// Build HTTP handler
+	handler := app.BuildHandler(deps)
 
-	srv := app.NewServer(cfg.HTTPAddr, handler, logger)
+	srv := &http.Server{
+		Addr:         cfg.HTTPAddr,
+		Handler:      handler,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
 	go func() {
-		if err := srv.Start(); err != nil && err != http.ErrServerClosed {
+		logger.Info("starting server", "addr", cfg.HTTPAddr)
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			logger.Error("server error", "error", err)
 			os.Exit(1)
 		}
@@ -76,23 +79,6 @@ func main() {
 
 func runIngestion(ctx context.Context, cfg *config.Config, logger *logging.Logger) error {
 	return nil
-}
-
-func buildHandler(deps *app.Dependencies, cfg *config.Config, logger *logging.Logger) (http.Handler, error) {
-	r := gin.New()
-	r.Use(gin.Recovery())
-	r.Use(func(c *gin.Context) {
-		id := c.GetHeader("X-Request-Id")
-		if id == "" {
-			id = generateRequestID()
-		}
-		c.Set("request_id", id)
-		c.Writer.Header().Set("X-Request-Id", id)
-		c.Next()
-	})
-	r.GET("/healthz", func(c *gin.Context) { c.String(http.StatusOK, "ok") })
-	r.GET("/readyz", func(c *gin.Context) { c.String(http.StatusOK, "ready") })
-	return r, nil
 }
 
 func generateRequestID() string {
