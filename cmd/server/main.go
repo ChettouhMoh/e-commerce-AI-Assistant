@@ -13,11 +13,15 @@ import (
 	"ecommerce-ai-assistant/internal/app"
 	"ecommerce-ai-assistant/internal/platform/config"
 	"ecommerce-ai-assistant/internal/platform/logging"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
 	ingest := flag.Bool("ingest", false, "Run RAG ingestion and exit")
 	flag.Parse()
+
+	_ = godotenv.Load(".env")
 
 	cfg := config.Default()
 	if err := cfg.Validate(); err != nil {
