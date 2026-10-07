@@ -38,11 +38,11 @@ Groq supports several models. For this project, we recommend:
 
 | Model | Size | Speed | Quality | Best For |
 |-------|------|-------|---------|----------|
-| `llama-3.2-3b-preview` | 3B params | Very fast | Good | General purpose |
-| `llama-3.1-8b-instant` | 8B params | Fast | Better | Complex reasoning |
-| `gemma2-9b-it` | 9B params | Fast | Better | Instruction following |
+| `openai/gpt-oss-20b` | 20B params | Very fast | Good | General purpose, **recommended** |
+| `openai/gpt-oss-120b` | 120B params | Fast | Better | Complex reasoning |
+| `qwen/qwen3.6-27b` | 27B params | Fast | Better | Instruction following |
 
-**Recommendation:** Start with `llama-3.2-3b-preview` - it's fast and works well for tool calling.
+**Recommendation:** Start with `openai/gpt-oss-20b` - it's fast and works well for tool calling.
 
 ### Step 4: Configure
 
@@ -50,14 +50,14 @@ Groq supports several models. For this project, we recommend:
 # Set environment variables
 $env:LLM_BASE_URL="https://api.groq.com/openai/v1"
 $env:LLM_API_KEY="gsk-your-actual-key-here"
-$env:LLM_MODEL="llama-3.2-3b-preview"
+$env:LLM_MODEL="openai/gpt-oss-20b"
 ```
 
 Or add to `.env`:
 ```env
 LLM_BASE_URL=https://api.groq.com/openai/v1
 LLM_API_KEY=gsk_your_actual_key_here
-LLM_MODEL=llama-3.2-3b-preview
+LLM_MODEL=openai/gpt-oss-20b
 ```
 
 ### Step 5: Test
@@ -66,7 +66,7 @@ LLM_MODEL=llama-3.2-3b-preview
 curl https://api.groq.com/openai/v1/chat/completions `
   -H "Authorization: Bearer gsk_your_actual_key_here" `
   -H "Content-Type: application/json" `
-  -d "{`"model`":`"llama-3.2-3b-preview`",`"messages`":[{`"role`":`"user`",`"content`":`"hi`"}]}"
+  -d "{`"model`":`"openai/gpt-oss-20b`",`"messages`":[{`"role`":`"user`",`"content`":`"hi`"}]}"
 ```
 
 ---
@@ -145,7 +145,7 @@ HTTP_ADDR=:8080
 # Groq LLM
 LLM_BASE_URL=https://api.groq.com/openai/v1
 LLM_API_KEY=gsk_your_groq_key
-LLM_MODEL=llama-3.2-3b-preview
+LLM_MODEL=openai/gpt-oss-20b
 
 # Hugging Face Embeddings
 EMBEDDING_PROVIDER=huggingface
