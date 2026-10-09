@@ -7,14 +7,13 @@ import (
 	"ecommerce-ai-assistant/internal/assistant/adapters/llmhttp"
 	"ecommerce-ai-assistant/internal/assistant/application"
 	catalogmemory "ecommerce-ai-assistant/internal/catalog/adapters/memory"
-	ordermemory "ecommerce-ai-assistant/internal/orders/adapters/memory"
 	devchathandler "ecommerce-ai-assistant/internal/channels/devchat"
 	conversationmemory "ecommerce-ai-assistant/internal/conversation/adapters/memory"
 	"ecommerce-ai-assistant/internal/knowledge/adapters/fake"
 	hf "ecommerce-ai-assistant/internal/knowledge/adapters/huggingface"
 	knowledgememory "ecommerce-ai-assistant/internal/knowledge/adapters/memory"
-	"ecommerce-ai-assistant/internal/knowledge/adapters/ollama"
 	knowledgeports "ecommerce-ai-assistant/internal/knowledge/ports"
+	ordermemory "ecommerce-ai-assistant/internal/orders/adapters/memory"
 	"ecommerce-ai-assistant/internal/platform/config"
 	toolsapplication "ecommerce-ai-assistant/internal/tools/application"
 )
@@ -42,11 +41,6 @@ func Wire(cfg *config.Config) (*Dependencies, error) {
 		deps.Embedder = hf.NewClient(hf.DefaultConfig(
 			cfg.HuggingFaceEmbeddingModel,
 			cfg.HuggingFaceAPIKey,
-		))
-	case "ollama":
-		deps.Embedder = ollama.NewClient(ollama.DefaultConfig(
-			cfg.OllamaBaseURL,
-			cfg.OllamaEmbeddingModel,
 		))
 	case "fake":
 		deps.Embedder = fake.NewFakeEmbeddingProvider()

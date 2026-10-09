@@ -13,8 +13,6 @@ type Config struct {
 	LLMApiKey                        string
 	LLMModel                         string
 	EmbeddingProvider                string
-	OllamaBaseURL                    string
-	OllamaEmbeddingModel             string
 	HuggingFaceBaseURL               string
 	HuggingFaceEmbeddingModel        string
 	HuggingFaceAPIKey                string
@@ -40,8 +38,6 @@ func Default() *Config {
 		LLMApiKey:                        getEnv("LLM_API_KEY", ""),
 		LLMModel:                         getEnv("LLM_MODEL", "llama-3.2-3b-preview"),
 		EmbeddingProvider:                getEnv("EMBEDDING_PROVIDER", "huggingface"),
-		OllamaBaseURL:                    getEnv("OLLAMA_BASE_URL", "http://localhost:11434"),
-		OllamaEmbeddingModel:             getEnv("OLLAMA_EMBEDDING_MODEL", "nomic-embed-text"),
 		HuggingFaceBaseURL:               getEnv("HUGGINGFACE_BASE_URL", "https://api-inference.huggingface.co"),
 		HuggingFaceEmbeddingModel:        getEnv("HUGGINGFACE_EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2"),
 		HuggingFaceAPIKey:                getEnv("HUGGINGFACE_API_KEY", ""),
@@ -49,7 +45,7 @@ func Default() *Config {
 		WhatsAppAppSecret:                getEnv("WHATSAPP_APP_SECRET", ""),
 		WhatsAppAccessToken:              getEnv("WHATSAPP_ACCESS_TOKEN", ""),
 		WhatsAppPhoneNumberID:            getEnv("WHATSAPP_PHONE_NUMBER_ID", ""),
-		WhatsAppGraphAPIVersion:          getEnv("WHATSAPP_GRAPH_API_VERSION", "v18.0"),
+		WhatsAppGraphAPIVersion:          getEnv("WHATSAPP_GRAPH_API_VERSION", ""),
 		WhatsAppWebhookSignatureRequired: getEnvBool("WHATSAPP_WEBHOOK_SIGNATURE_REQUIRED", false),
 		MaxToolCalls:                     getEnvInt("MAX_TOOL_CALLS", 5),
 		TopK:                             getEnvInt("TOP_K", 5),
@@ -61,9 +57,6 @@ func Default() *Config {
 }
 
 func (c *Config) Validate() error {
-	if c.HTTPAddr == "" {
-		return fmt.Errorf("HTTP_ADDR is required")
-	}
 	if c.MaxToolCalls <= 0 {
 		return fmt.Errorf("MAX_TOOL_CALLS must be positive")
 	}
